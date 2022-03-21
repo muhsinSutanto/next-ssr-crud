@@ -7,13 +7,11 @@ import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { BASE_URL } from "../const/config";
 import { ENDPOINTS } from "../const/endpoints";
-import fetch from "isomorphic-fetch";
 
 export async function getServerSideProps() {
-   const response = await fetch(`${BASE_URL}/${ENDPOINTS.POST_LIST}`);
+   const response = await axios(`${BASE_URL}/${ENDPOINTS.POST_LIST}`);
    const errorCode = response.status !== 200 ? response.status : false;
    const rawData = response.status !== 200 ? false : response.data;
-   console.log(response.status);
    return {
       props: {
          data: rawData,

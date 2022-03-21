@@ -1,5 +1,5 @@
 const ENDPOINTS = {
-   POST_LIST: "post",
+   POST_LIST: "posts",
 };
 
 export { ENDPOINTS };

@@ -1,5 +1,5 @@
 const ENDPOINTS = {
-   POST_LIST: "api/?",
+   POST_LIST: "post",
 };
 
 export { ENDPOINTS };

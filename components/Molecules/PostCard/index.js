@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useStyles } from "./style";
 import Link from "next/link";
-import { Button, TextField } from "@mui/material";
+import { TextField, TextareaAutosize } from "@mui/material";
 import axios from "axios";
+import styles from "../../../styles/Card.module.css";
+import Swal from "sweetalert2";
+import { BASE_URL } from "../../../const/config";
+import { ENDPOINTS } from "../../../const/endpoints";
 
 const PostCard = (props) => {
-   const classes = useStyles();
-
    const { data, index, handleDelete, refreshData } = props;
    const [editForm, setEditForm] = useState(false);
    const [title, setTitle] = useState("");
@@ -15,36 +16,29 @@ const PostCard = (props) => {
    useEffect(() => {
       setTitle(data.title);
       setContent(data.content);
-      //set props here to check the changes on the state
    }, [props]);
 
-   const handleUpdate = async (id, title, content) => {
+   const handleUpdate = async (id) => {
       const data = {
          title,
          content,
       };
-      console.log(data);
-      const res = await axios.put(`https://limitless-forest-49003.herokuapp.com/posts/${id}`, data);
-
-      console.log(res);
+      const res = await axios.put(`${BASE_URL}/${ENDPOINTS.POST_LIST}/${id}`, data);
       if (res.status === 200) {
+         Swal.fire({
+            icon: "success",
+            text: "The post is updated",
+            showConfirmButton: false,
+            timer: 3000,
+         });
          refreshData();
          setEditForm(false);
       }
    };
 
-   console.log(title, content);
    return (
-      <div className={classes.cardContainer}>
+      <div className={styles.container}>
          <div>
-            <p>
-               Post Number <span>{index + 1}</span>
-            </p>
-            <Link href={`/post/${data.id}`}>
-               <Button>See Detail</Button>
-            </Link>
-         </div>
-         <div className={classes.bottomCard}>
             {!!editForm ? (
                <div>
                   <TextField
@@ -52,34 +46,37 @@ const PostCard = (props) => {
                         setTitle(e.target.value);
                      }}
                      variant="outlined"
+                     label="Title"
                      value={title}
                      name="title"
+                     className={styles.formUpdate}
                   />
-                  <TextField
+                  <TextareaAutosize
                      onChange={(e) => {
                         setContent(e.target.value);
                      }}
-                     variant="outlined"
+                     aria-label="minimum height"
+                     minRows={3}
+                     label="Content"
+                     className={styles.formUpdate}
                      value={content}
                   />
+                  <div style={{ display: "flex" }}>
+                     <p onClick={() => handleUpdate(data.id)}>Update</p>
+                     <p onClick={() => setEditForm(false)}>Cancel</p>
+                  </div>
                </div>
             ) : (
                <div>
-                  <h1>{data.title === null ? "This post has no title" : data.title}</h1>
-                  <h1>{data.content === null ? "This post has no title" : data.content}</h1>
-               </div>
-            )}
-         </div>
-         <div>
-            {!!editForm ? (
-               <div>
-                  <Button onClick={() => setEditForm(false)}>Cancel</Button>
-                  <Button onClick={() => handleUpdate(data.id, title, content)}>Update</Button>
-               </div>
-            ) : (
-               <div>
-                  <Button onClick={() => setEditForm(true)}>Edit</Button>
-                  <Button onClick={() => handleDelete(data.id)}>Delete</Button>
+                  <h3>{data.title === null ? "-" : data.title}</h3>
+                  <h2>{data.content === null ? "......." : data.content}</h2>
+                  <div style={{ display: "flex" }}>
+                     <Link href={`/post/${data.id}`}>
+                        <p>See Detail</p>
+                     </Link>
+                     <p onClick={() => setEditForm(true)}>Edit</p>
+                     <p onClick={() => handleDelete(data.id)}>Delete</p>
+                  </div>
                </div>
             )}
          </div>

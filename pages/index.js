@@ -45,7 +45,7 @@ export default function Home({ errorCode, data }) {
       return (
          <Alert severity="error">
             <AlertTitle>Error</AlertTitle>
-            {errorCode} — Data not found. API doesn't work!!!
+            {errorCode} — Data not found
          </Alert>
       );
    }
